@@ -17,4 +17,4 @@ ADD . /app
 EXPOSE 5000
 
 # execute the Flask app
-CMD ["python", "app.py"]
+ENTRYPOINT ["python", "app.py"]
