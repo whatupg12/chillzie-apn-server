@@ -1,4 +1,5 @@
 
+import os
 from flask import Flask, request
 
 from threading import Timer
@@ -53,12 +54,25 @@ def alarm():
     return "<html><body><p>Sorry wrong page</p></body></html>"
 
 
+@app.route("/temps", methods=['GET'])
+def temps():
+    with open('temps.csv', 'r') as t:
+        return t.read()
+
+
 def push_notification(token_hex):
     global pusher
 
     if pusher is None:
-        logging.error("No pusher setup!")
-        raise Exception("No pusher setup!")
+        auth_key_path = os.getenv("APN_KEYSTORE_P8")
+        logging.info(f"Building Pusher: {auth_key_path}")
+        pusher = NotificationPusher(
+            topic="com.chillzie.Chillzie",
+            auth_key_path=auth_key_path,
+            auth_key_id=os.getenv("APN_AUTH_KEY_ID"),
+            team_id=os.getenv("APN_TEAM_ID"),
+            use_sandbox=True
+        )
 
     logging.debug("Pushing notification: TOKEN=%s", token_hex)
     pusher.push(token_hex)

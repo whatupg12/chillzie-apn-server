@@ -19,8 +19,8 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt --src /usr/lo
 # add the current directory to the container
 COPY . /srv/flask_app
 
-# unblock port 80 for the Flask app to run on
-EXPOSE 80
+# unblock port 443 for the Flask app to run on
+EXPOSE 443
 
 # copy the nginx config, chmod the startup script, and set the startup
 COPY nginx.conf /etc/nginx
