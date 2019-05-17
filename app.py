@@ -4,6 +4,7 @@ from flask import Flask, request
 
 from threading import Timer
 
+import pytz
 from datetime import datetime, timezone
 import dateutil.parser
 
@@ -22,6 +23,8 @@ logging.basicConfig(
 pusher = None
 app = Flask("ChillzieServer")
 
+utc = pytz.utc
+
 
 @app.route("/alarm", methods=['POST', 'GET'])
 def alarm():
@@ -32,8 +35,8 @@ def alarm():
 
         logging.debug("Received request: TOKEN=%s, ALARM=%s", token_hex, alarm_str)
 
-        now = datetime.now(timezone.utc)
-        alarm = dateutil.parser.parse(alarm_str)
+        now = utc.localize(datetime.now())
+        alarm = utc.localize(dateutil.parser.parse(alarm_str))
 
         if alarm < now:
             logging.info("Alarm has passed; ignore request")

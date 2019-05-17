@@ -10,6 +10,7 @@ flask = "*"
 apns2 = "*"
 python-dateutil = "*"
 jinja2 = "*"
+pytz = "*"
 
 [requires]
 python_version = "3.7"
