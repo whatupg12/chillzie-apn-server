@@ -27,7 +27,7 @@ utc = pytz.utc
 
 
 @app.route("/alarm", methods=['POST', 'GET'])
-def alarm():
+def set_alarm():
     error = None
     if request.method == 'POST':
         token_hex = request.form["token_hex"]
@@ -36,7 +36,9 @@ def alarm():
         logging.debug("Received request: TOKEN=%s, ALARM=%s", token_hex, alarm_str)
 
         now = utc.localize(datetime.now())
-        alarm = utc.localize(dateutil.parser.parse(alarm_str))
+        alarm = dateutil.parser.parse(alarm_str)
+        if alarm.tzinfo is None or alarm.tzinfo.utcoffset(alarm) is None:
+            alarm = utc.localize(alarm)
 
         if alarm < now:
             logging.info("Alarm has passed; ignore request")
