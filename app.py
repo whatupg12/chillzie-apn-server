@@ -1,6 +1,6 @@
 
 import os
-from flask import Flask, request
+from flask import Flask, request, Response
 
 from threading import Timer
 
@@ -62,7 +62,7 @@ def set_alarm():
 @app.route("/temps", methods=['GET'])
 def temps():
     with open('temps.csv', 'r') as t:
-        return t.read()
+        return Response(t.read(), mimetype="text/csv")
 
 
 def push_notification(token_hex):
