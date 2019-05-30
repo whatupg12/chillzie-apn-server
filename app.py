@@ -32,8 +32,9 @@ def set_alarm():
     if request.method == 'POST':
         token_hex = request.form["token_hex"]
         alarm_str = request.form["alarm"]
+        beverage = request.form["beverage"]
 
-        logging.debug("Received request: TOKEN=%s, ALARM=%s", token_hex, alarm_str)
+        logging.debug("Received request: TOKEN=%s, ALARM=%s, BEVERAGE=%s", token_hex, alarm_str, beverage)
 
         now = utc.localize(datetime.now())
         alarm = dateutil.parser.parse(alarm_str)
@@ -49,7 +50,7 @@ def set_alarm():
         Timer(
             interval.seconds,
             push_notification,
-            args=[token_hex]
+            args=[token_hex, beverage]
         ).start()
 
         return "<html><body><p>Alarm set</p></body></html>"
@@ -65,7 +66,7 @@ def temps():
         return Response(t.read(), mimetype="text/csv")
 
 
-def push_notification(token_hex):
+def push_notification(token_hex, beverage):
     global pusher
 
     if pusher is None:
@@ -80,7 +81,7 @@ def push_notification(token_hex):
         )
 
     logging.debug("Pushing notification: TOKEN=%s", token_hex)
-    pusher.push(token_hex)
+    pusher.push(token_hex, beverage)
 
 
 class NotificationPusher(object):
@@ -94,8 +95,8 @@ class NotificationPusher(object):
             use_alternative_port=False
         )
 
-    def push(self, token_hex):
-        payload = Payload(alert="Hello World!", sound="default", badge=1)
+    def push(self, token_hex, beverage):
+        payload = Payload(alert=f"{beverage} is ready!", sound="default", badge=1)
         self.client.send_notification(token_hex, payload, self.topic)
 
 
