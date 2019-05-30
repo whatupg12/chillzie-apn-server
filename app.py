@@ -95,7 +95,7 @@ class NotificationPusher(object):
         )
 
     def push(self, token_hex):
-        payload = Payload(alert="Hello World!", sound="default", badge=0)
+        payload = Payload(alert="Hello World!", sound="default", badge=1)
         self.client.send_notification(token_hex, payload, self.topic)
 
 
